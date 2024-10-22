@@ -11,36 +11,22 @@
  */
 
 function oddEvenList(head: ListNode | null): ListNode | null {
-    let node = head;
-    let odd = null;
-    let even = null;
-    let evenhead = null;
-    let index = 0;
+    if (head === null || head.next === null) return head;
 
-    while(node) {
-        const current = node;
-        if (index % 2 === 0) {
-            if (odd !== null) {
-                odd.next = current;
-                odd = odd.next;
-            } else {
-                odd = current;
-            }
-        } else {
-            if (even !== null) {
-                even.next = current;
-                even = even.next;
-            } else {
-                even = current;
-                evenhead = current;
-            }
-        }
-        node = node.next;
-        index++;
+    let oddNode: ListNode | null = head;
+    let evenNode: ListNode | null = head.next;
+    const evenHead: ListNode | null = evenNode;
+
+    while(evenNode !== null && evenNode.next !== null) {
+        oddNode.next = oddNode.next.next;
+        evenNode.next = evenNode.next.next;
+
+        oddNode = oddNode.next;
+        evenNode = evenNode.next;
+
     }
 
-    if (odd !== null) odd.next = evenhead;
-    if (even !== null) even.next = null;
+    oddNode.next = evenHead;
 
     return head;
 };
