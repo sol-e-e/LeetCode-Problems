@@ -23,15 +23,12 @@ function dfs(root: TreeNode | null, targetSum: number, sums: number[]) {
 
     let count = 0;
 
-    sums = sums.map(s => {
-        const sum = s + root.val;
-        if (sum === targetSum) {
-            count++;
-        }
-        return sum;
-    });
-
+    sums = sums.map(s => s + root.val);
     sums.push(root.val);
+
+    sums.forEach(s => {
+        if (s === targetSum) count++;
+    })
 
     count += dfs(root!.left, targetSum, sums);
     count += dfs(root!.right, targetSum, sums);
