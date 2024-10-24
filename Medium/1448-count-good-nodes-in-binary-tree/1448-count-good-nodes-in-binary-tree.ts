@@ -14,15 +14,16 @@
 
 function goodNodes(root: TreeNode | null): number {
     let answer = 0;
-    let max = root.val;
 
-    DFS(root, max);
+    DFS(root, root.val);
+
     function DFS(root: TreeNode | null, max: number) {
         if (!root) return;
         if (root.val >= max) {
             answer++;
             max = Math.max(root.val, max);
         }
+        
         DFS(root!.left, max);
         DFS(root!.right, max);
     }
