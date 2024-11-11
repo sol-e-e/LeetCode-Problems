@@ -2,6 +2,7 @@ function nearestExit(maze: string[][], entrance: number[]): number {
     const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     let steps = Infinity;
     const cells = [[...entrance, 0]];
+    const [width, height] = [maze.length, maze[0].length];
 
     while (cells.length) {
         const [cx, cy, cd] = cells.shift();
@@ -12,14 +13,14 @@ function nearestExit(maze: string[][], entrance: number[]): number {
             const nx = cx + x;
             const ny = cy + y;
 
-            if (nx < 0 || ny < 0 || nx >= maze.length || ny >= maze[0].length) continue;
+            if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
             if (maze[nx][ny] === '+') continue;
 
-            if (nx === 0 || ny === 0 || nx === maze.length - 1 || ny === maze[0].length - 1) {
+            if (nx === 0 || ny === 0 || nx === width - 1 || ny === height - 1) {
                 steps = Math.min(steps, cd + 1);
             }
 
-            cells.unshift([nx, ny, cd + 1]);
+            cells.push([nx, ny, cd + 1]);
         }
     }
 
