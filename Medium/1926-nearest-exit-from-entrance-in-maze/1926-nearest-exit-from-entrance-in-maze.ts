@@ -19,7 +19,7 @@ function nearestExit(maze: string[][], entrance: number[]): number {
                 steps = Math.min(steps, cd + 1);
             }
 
-            cells.push([nx, ny, cd + 1]);
+            cells.unshift([nx, ny, cd + 1]);
         }
     }
 
