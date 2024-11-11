@@ -6,6 +6,7 @@ function nearestExit(maze: string[][], entrance: number[]): number {
 
     while (cells.length) {
         const [cx, cy, cd] = cells.shift();
+        if (visited.has(cx + ',' + cy)) continue;
 
         visited.add(cx + ',' + cy);
 
