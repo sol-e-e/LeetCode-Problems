@@ -8,7 +8,7 @@ function canCompleteCircuit(gas: number[], cost: number[]): number {
 
     for (let i = 0; i < len * 2; i++) {
         const cur = i % len;
-        if (gas[cur] > gas[cur] + tank) {
+        if (gas[cur] >= gas[cur] + tank) {
             tank = gas[cur];
             start = cur;
         } else {
