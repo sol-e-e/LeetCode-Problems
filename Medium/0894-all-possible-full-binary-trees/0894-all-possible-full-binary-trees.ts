@@ -12,11 +12,14 @@
  * }
  */
 
+const memo: Map<number, Array<TreeNode | null>> = new Map();
 
 function allPossibleFBT(n: number): Array<TreeNode | null> {
     const result: Array<TreeNode | null> = [];
 
     if (n % 2 === 0) return result;
+
+    if (memo.has(n)) return memo.get(n)!;
 
     if (n === 1) {
         result.push(new TreeNode(0));
@@ -39,6 +42,8 @@ function allPossibleFBT(n: number): Array<TreeNode | null> {
             }
         }
     }
+
+    memo.set(n, result);
 
     return result;
 };
