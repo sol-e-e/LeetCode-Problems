@@ -1,18 +1,18 @@
 function subsets(nums: number[]): number[][] {
     const result: number[][] = [];
+    const path: number[] = [];
 
-    function backtrack(cur: number[], idx: number) {
-        result.push(cur);
+    function backtrack(start: number) {
+        result.push([...path]);
 
-        if (idx === nums.length) return;
-
-        for (let i = idx; i < nums.length; i++) {
-            const next = [...cur].concat(nums[i]);
-            backtrack(next, i + 1);
+        for (let i = start; i < nums.length; i++) {
+            path.push(nums[i]);
+            backtrack(i + 1);
+            path.pop();
         }
     }
 
-    backtrack([], 0);
+    backtrack(0);
 
     return result;
 };
