@@ -1,26 +1,34 @@
 function exist(board: string[][], word: string): boolean {
-    const m = board.length, n = board[0].length;
-    const visited = new Set<string>();
+    const m = board.length, n = board[0].length, l = word.length;
+    const directions = [[0, -1], [0, 1], [1, 0], [-1, 0]];
+    const visited = new Set<string>(); // r:{}-c:{}
+    let answer :boolean = false;
 
-    function canSearch(row: number, col: number, idx: number) {
-        if (row < 0 || col < 0 || row >= m || col >= n || idx >= word.length) return false;
-        if (visited.has(`${row}-${col}`) || word[idx] !== board[row][col]) return false;
-        if (idx === word.length - 1 && word[idx] === board[row][col]) return true;
-        visited.add(`${row}-${col}`);
+    function dfs(row: number, col: number, idx: number) {
+        if (row >= m || col >= n || col < 0 || row < 0 || idx >= l) return;
+        if (visited.has(`r:${row}-c:${col}`)) return;
+        if (board[row][col] !== word[idx]) return;
+        if (idx === l - 1) {
+            answer = true;
+            return;
+        }
 
-        return canSearch(row + 1, col, idx + 1) || canSearch(row - 1, col, idx + 1) || canSearch(row, col + 1, idx + 1) || canSearch(row, col - 1, idx + 1)
+        visited.add(`r:${row}-c:${col}`);
+
+        for (let [r, c] of directions) {
+            dfs(row + r, col + c, idx + 1);
+        }
+
+        visited.delete(`r:${row}-c:${col}`);
     }
 
     for (let i = 0; i < m; i++) {
         for (let j = 0; j < n; j++) {
-            if (board[i][j] !== word[0]) continue;
-            if (canSearch(i, j, 0)) {
-                return true;
-            } else {
-                visited.clear();
+            if (board[i][j] === word[0]) {
+                dfs(i, j, 0);
             }
         }
     }
 
-    return false;
+    return answer;
 };
