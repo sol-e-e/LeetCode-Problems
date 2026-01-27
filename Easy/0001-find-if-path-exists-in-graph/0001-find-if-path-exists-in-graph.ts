@@ -1,26 +1,25 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
-    const graph = Array.from({length: n}, () => []);
+    const parent = Array.from({length: n}, (_, i) => i);
 
     for (let [u, v] of edges) {
-        graph[u].push(v);
-        graph[v].push(u);
+        union(u, v);
+    }
+    
+    return find(source) === find(destination)
+
+    function find(x: number) {
+        while (parent[x] !== x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
     }
 
-    const visited = Array(n).fill(false);
-    const queue = [source];
-    visited[source] = true;
-
-    while (queue.length) {
-        const current = queue.shift();
-        
-        for (let next of graph[current]) {
-            if (next === destination) return true;
-            if (!visited[next]) {
-                visited[next] = true;
-                queue.push(next);
-            }
+    function union(a: number, b: number) {
+        const rootA = find(a);
+        const rootB = find(b);
+        if (rootA !== rootB) {
+            parent[rootA] = rootB;
         }
     }
-
-    return source === destination;
 };
