@@ -3,62 +3,55 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
     const pseudoCriticalEdges: number[] = [];
     const indexedEdges: number[][] = edges.map((edge, i) => [...edge, i]).sort((a, b) => a[2] - b[2]);
 
-    const [originWeight, maxWeight] = kruskal(n, indexedEdges);
+    function kruskal(skipIdx: number, forcedEdge: number[] | null): number {
+        const uf = new UnionFind(n);
+        let totalWeight = 0;
 
-    for (const [u, v, weight, originIdx] of indexedEdges) {
-        if (weight > maxWeight) break;
-
-        const [weightWithout] = kruskal(n, indexedEdges, originIdx);
-        if (weightWithout > originWeight) {
-            criticalEdges.push(originIdx);
-            continue;
+        if (forcedEdge !== null) {
+            if (uf.union(forcedEdge[0], forcedEdge[1])) {
+                totalWeight += forcedEdge[2];
+            }
         }
+    
+        for (const [u, v, weight, originalIdx] of indexedEdges) {
+            if (originalIdx === skipIdx) continue;
 
-        const [weightWith] = kruskal(n, indexedEdges, undefined, originIdx);
-        if (weightWith === originWeight) {
-            pseudoCriticalEdges.push(originIdx);
+            if (uf.union(u, v)) { 
+                totalWeight += weight;
+            }
+        }
+    
+        return uf.components === 1 ? totalWeight : Infinity;
+    }
+
+    const originalWeight = kruskal(-1, null);
+
+    for (const edge of indexedEdges) {
+        const originalIdx = edge[3]
+
+        const weightWithout = kruskal(originalIdx, null);
+        if (weightWithout > originalWeight) {
+            criticalEdges.push(originalIdx);
+        } else {
+            const weightWith = kruskal(-1, edge);
+            if (weightWith === originalWeight) {
+                pseudoCriticalEdges.push(originalIdx);
+            }
         }
     }
     
     return [criticalEdges, pseudoCriticalEdges];
 };
 
-
-function kruskal(n: number, edges: number[][], skipIdx?: number, forcedIdx?: number): [number, number] {
-    const uf = new UnionFind(n);
-    let totalWeight = 0;
-    let maxWeight = 0;
-    let edgeCount = 0;
-
-    if (forcedIdx !== undefined) {
-        const forcedEdge = edges.find(([u, v, w, idx]) => idx === forcedIdx)!;
-        if (uf.union(forcedEdge[0], forcedEdge[1])) {
-        totalWeight += forcedEdge[2];
-        edgeCount++;
-    }
-    }
-    
-    for (const [u, v, weight, originIdx] of edges) {
-        if (originIdx === skipIdx || originIdx === forcedIdx) continue;
-
-        if (uf.union(u, v)) { 
-            totalWeight += weight;
-            maxWeight = weight;
-            edgeCount++;
-            if (edgeCount === n - 1) break;
-        }
-    }
-    
-    return edgeCount === n - 1 ?  [totalWeight, maxWeight] : [Infinity, 0];
-}
-
 class UnionFind {
     parent: number[];
     rank: number[];
+    components: number;
     
     constructor(n: number) {
         this.parent = Array.from({length: n}, (_, i) => i);
         this.rank = Array(n).fill(0);
+        this.components = n;
     }
     
     find(x: number): number {
@@ -83,6 +76,7 @@ class UnionFind {
             this.rank[rootX]++;
         }
         
+        this.components--;
         return true;
     }
 }
